@@ -1,3 +1,6 @@
+from hashfunctions import djb2, fnv1
+
+
 class HashTableEntry:
     """
     Linked List hash table key/value pair
@@ -20,9 +23,13 @@ class HashTable:
     Implement this.
     """
 
-    def __init__(self, capacity):
+    def __init__(self, capacity, hashfn = fnv1):
         # Your code here
+        self.hashfn = hashfn
 
+
+    def hash(self, key):
+        return self.hashfn(key)
 
     def get_num_slots(self):
         """
@@ -42,25 +49,6 @@ class HashTable:
         Return the load factor for this hash table.
 
         Implement this.
-        """
-        # Your code here
-
-
-    def fnv1(self, key):
-        """
-        FNV-1 Hash, 64-bit
-
-        Implement this, and/or DJB2.
-        """
-
-        # Your code here
-
-
-    def djb2(self, key):
-        """
-        DJB2 hash, 32-bit
-
-        Implement this, and/or FNV-1.
         """
         # Your code here
 
