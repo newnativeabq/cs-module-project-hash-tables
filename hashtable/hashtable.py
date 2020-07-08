@@ -10,6 +10,9 @@ class HashTableEntry:
         self.value = value
         self.next = None
 
+    def __repr__(self):
+        return f'{self.key}: {self.value}'
+
 
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
@@ -26,10 +29,13 @@ class HashTable:
     def __init__(self, capacity, hashfn = fnv1):
         # Your code here
         self.hashfn = hashfn
+        self.capacity = capacity
+        self.store = [None] * capacity
 
 
     def hash(self, key):
         return self.hashfn(key)
+
 
     def get_num_slots(self):
         """
@@ -41,7 +47,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return len(self.store)
 
 
     def get_load_factor(self):
@@ -50,7 +56,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        c = sum([item is not None for item in self.store])
+        return c / self.get_num_slots()
 
 
     def hash_index(self, key):
@@ -58,8 +65,38 @@ class HashTable:
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        #return self.fnv1(key) % self.capacity
-        return self.djb2(key) % self.capacity
+        i = self.hash(key) % self.capacity
+        return i
+
+
+    def search_entries(self, e, k):
+        t = e
+        if t is None:
+            return
+
+        while True:
+            if t.key == k:
+                return t
+            elif t.next is None:
+                return t
+            else:
+                t = t.next
+
+
+    def add_update(self, k, v):
+        i = self.hash_index(k)
+        t = self.store[i]
+
+        if t is None:
+            self.store[i] = HashTableEntry(k, v)
+            return
+
+        n = self.search_entries(t, k)
+        if n.key == k:
+            n.value = v 
+        else:
+            n.next = HashTableEntry(k,v)
+
 
     def put(self, key, value):
         """
@@ -69,7 +106,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        i = self.hash_index(key)
+        self.add_update(key, value)
 
 
     def delete(self, key):
@@ -80,7 +118,12 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        i = self.hash_index(key)
+        e = self.search_entries(self.store[i], key)
+
+        if e is None:
+            print('Key not found')
+        e.value = None
 
 
     def get(self, key):
@@ -91,7 +134,30 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        def _validate(e, k):
+            assert e.key == k, 'Search failed'
+
+        i = self.hash_index(key)
+        e = self.search_entries(self.store[i], key)
+
+        if e is None:
+            return
+        _validate(e, key) 
+        return e.value
+
+
+    def _get_all(self, swap):
+        items = []
+        for e in swap:
+            t = e
+            if t is not None:
+                while True:
+                    items.append((t.key, t.value))
+                    if t.next is not None:
+                        t = t.next
+                    else:
+                        break
+        return items
 
 
     def resize(self, new_capacity):
@@ -101,7 +167,10 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        swap = [item for item in self.store]
+        self.store = [None] * new_capacity
+
+        [self.add_update(k, v) for k, v in self._get_all(swap)]
 
 
 
