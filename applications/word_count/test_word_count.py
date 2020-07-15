@@ -19,9 +19,11 @@ class TestWordCount(unittest.TestCase):
         self.assertTrue(x == {'this': 2, 'is': 2, 'a': 2, 'test': 2, 'of': 1, 'the': 1, 'emergency': 1, 'broadcast': 1, 'network': 1, 'only': 1})
 
         x = word_count('":;,.-+=/\\|[]{}()*^&')
+        print(x)
         self.assertTrue(x == {})
 
         x = word_count('a a\ra\na\ta \t\r\n')
+        print(x)
         self.assertTrue(x == {"a": 5})
 
 if __name__ == '__main__':
