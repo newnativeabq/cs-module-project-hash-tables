@@ -123,6 +123,9 @@ class HashTable:
 
         if e is None:
             print('Key not found')
+        elif e.key != key:
+            print('Key not found')
+            return
         e.value = None
 
 
@@ -170,7 +173,12 @@ class HashTable:
         swap = [item for item in self.store]
         self.store = [None] * new_capacity
 
-        [self.add_update(k, v) for k, v in self._get_all(swap)]
+        while len(swap) > 0:
+            entry = swap.pop()
+            if entry is not None:
+                self.store[self.hash_index(entry.key)] = entry
+
+        # [self.add_update(k, v) for k, v in self._get_all(swap)]
 
 
 
