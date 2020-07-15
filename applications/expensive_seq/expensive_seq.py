@@ -1,8 +1,31 @@
 # Your code here
 
+CACHE = {}
 
-def expensive_seq(x, y, z):
-    # Your code here
+def cached(cache=CACHE):
+    def check_args(func):
+        def call(*args, **kwargs):
+            if args in cache:
+                return cache[args]
+            else:
+                result = func(*args)
+                cache[args] = result
+                return result
+        return call 
+    return check_args
+
+
+
+@cached(CACHE)
+def expensive_seq(*args):
+    x = args[0]
+    y = args[1]
+    z = args[2]
+
+    if x <= 0: 
+        return y + z
+    if x >  0: 
+        return expensive_seq(x-1,y+1,z) + expensive_seq(x-2,y+2,z*2) + expensive_seq(x-3,y+3,z*3)
 
 
 
